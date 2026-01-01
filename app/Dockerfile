@@ -7,7 +7,7 @@ COPY . .
 
 RUN pip install --upgrade pip && pip install -r requirements.txt
 
-RUN chmod +x startup.sh
+RUN apt-get update && apt-get install -y dos2unix && dos2unix startup.sh && chmod +x startup.sh
 
 EXPOSE 8000
 ENTRYPOINT ["/app/startup.sh"]

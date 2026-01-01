@@ -3,7 +3,7 @@ LABEL authors="Maciej Krzywda"
 
 COPY startup.sh ./startup.sh
 
-RUN chmod +x ./startup.sh
+RUN apt-get update && apt-get install -y dos2unix && dos2unix startup.sh && chmod +x ./startup.sh
 
 EXPOSE 11434
 
