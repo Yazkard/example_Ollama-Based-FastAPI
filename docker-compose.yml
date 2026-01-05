@@ -13,6 +13,7 @@ services:
     container_name: llm-based-fastapi
     ports:
       - "7777:8000"
+      - "5678:5678"
     restart: unless-stopped
     depends_on:
       - llm-ollama-deepseek
@@ -21,7 +22,7 @@ services:
     environment:
       - username=username123
       - password=password123
+      - DEBUG_MODE=true
 networks:
   app-network:
     driver: bridge
- 
