@@ -7,3 +7,6 @@ pytest==8.3.4
 ruff==0.9.5
 uvicorn==0.34.0
 tenacity==9.0.0
+httpx
+lxml==4.9.3
+beautifulsoup4==4.12.3

@@ -6,6 +6,8 @@ import time
 from prompts import generate_prompt
 from models.request import OllamaRequest, OllamaResponse
 from llm import safe_get_response_llm
+from models.books import BookURLRequest, BookPriceResponse
+from book_scraper import fetch_webpage, extract_book_info, search_book_prices
 import os
 import secrets
 
@@ -80,20 +82,33 @@ async def generate(
     user_prompt = f"Based on user query and context provided in System prompt generate: {request.prompt}"
 
     
-    llm_response, token_count = await safe_get_response_llm(
+    llm_response = await safe_get_response_llm(
             client, generate_prompt, user_prompt
     )
 
-    elapsed_time_ms = (time.time() - start_time) * 1000
-    elapsed_time_s = elapsed_time_ms / 1000
-    tokens_per_second = (
-            token_count / elapsed_time_s
-            if elapsed_time_s > 0 and token_count > 0
-            else 0
-    )
-
-    logger.info(
-            f"generate response completed successfully in {elapsed_time_ms:.0f} ms, "
-            f"processed {token_count} tokens, {tokens_per_second:.1f} tokens/second"
-    )
     return OllamaResponse(ollama_response=llm_response)
+
+@app.post("/find-book-prices", response_model=BookPriceResponse)
+async def find_book_prices(
+    request: BookURLRequest,
+    username: Annotated[str, Depends(verify_credentials)],
+    client: AsyncOpenAI = Depends(get_client),
+):
+    """
+    Takes a bookstore URL, extracts book info, and finds prices
+    """
+    url = str(request.url)
+    
+    # Fetch webpage
+    html_content = await fetch_webpage(url)
+    
+    # Extract book information
+    book_info = await extract_book_info(client, url, html_content)
+    
+    # Search for prices
+    #prices = await search_book_prices(client, book_info.title, book_info.author)
+    
+    return BookPriceResponse(
+        book=book_info,
+        prices=[]
+    )

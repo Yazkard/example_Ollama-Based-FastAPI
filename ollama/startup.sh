@@ -7,8 +7,8 @@ ollama serve &
 # Wait for the server to start (give it a few seconds)
 sleep 5
 
-echo "Pulling gemma3:1b..."
-ollama pull gemma3:1b
+echo "Pulling qwen3:1.7b..."
+ollama pull qwen3:1.7b
 
 echo "Ollama container is ready to go!"
 

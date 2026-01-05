@@ -1,6 +1,7 @@
 from openai import AsyncOpenAI
 from typing import Tuple
 from tenacity import retry, stop_after_attempt, wait_fixed
+import time
 
 import logging
 from logging.handlers import TimedRotatingFileHandler
@@ -22,14 +23,27 @@ logging.basicConfig(
 async def safe_get_response_llm(
     client: AsyncOpenAI, prompt: str, original_prompt: str
 ):
-    return await get_response_llm(client, prompt, original_prompt)
+    start_time = time.time()
+    llm_response, token_count  = await get_response_llm(client, prompt, original_prompt)
+    elapsed_time_ms = (time.time() - start_time) * 1000
+    elapsed_time_s = elapsed_time_ms / 1000
+    tokens_per_second = (
+            token_count / elapsed_time_s
+            if elapsed_time_s > 0 and token_count > 0
+            else 0
+    )
+
+    logger.info(
+            f"generate response completed successfully in {elapsed_time_ms:.0f} ms, "
+            f"processed {token_count} tokens, {tokens_per_second:.1f} tokens/second")
+    return llm_response
 
 
 async def get_response_llm(
     client: AsyncOpenAI, system_prompt: str, user_prompt: str
 ) -> Tuple[str, int]:
     response = await client.chat.completions.create(
-        model="gemma3:1b",
+        model="qwen3:1.7b",
         messages=[
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_prompt},
