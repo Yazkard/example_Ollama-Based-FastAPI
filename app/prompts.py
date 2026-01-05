@@ -6,3 +6,13 @@ book_info_prompt: str = """from texts provided by user choose the most relevant 
 
 Respond with ONLY a JSON object in this exact format, no other text:
 {{"title": "...", "author": "..."}}"""
+
+price_analysis_prompt: str = """Given these search results for a book, extract available prices and store names.
+Search results:
+{search_results}
+
+Respond with ONLY a JSON array of objects in this exact format:
+[
+  {{"store": "Store Name", "price": "$XX.XX", "url": "https://..."}}
+]
+Include up to 5 best options. If no prices found, return empty list []."""

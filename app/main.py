@@ -106,9 +106,9 @@ async def find_book_prices(
     book_info = await extract_book_info(client, url, html_content)
     
     # Search for prices
-    #prices = await search_book_prices(client, book_info.title, book_info.author)
+    prices = await search_book_prices(client, book_info.title, book_info.author)
     
     return BookPriceResponse(
         book=book_info,
-        prices=[]
+        prices=prices
     )
